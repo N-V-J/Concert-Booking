@@ -1,0 +1,9 @@
+<h2>Book Ticket</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Book</button>
+</form>
+{% if error %}
+    <p>{{ error }}</p>
+{% endif %}

@@ -1,0 +1,23 @@
+<!-- add_concert.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Concert</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">  <!-- Link to your CSS file -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-4">
+        <h1>Add a New Concert</h1>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}  <!-- Render the form fields -->
+            <button type="submit" class="btn btn-primary">Confirm</button>  <!-- Confirm button -->
+        </form>
+        <a href="{% url 'dealer' %}" class="btn btn-secondary">Cancel</a>  <!-- Link to go back to the dealer page -->
+    </div>
+</body>
+</html>

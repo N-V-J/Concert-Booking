@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dealer Page</title>
+    {% load static %}
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <style>
+        body {
+            background-color: #f8f9fa; /* Light background color */
+        }
+        .container {
+            margin-top: 20px;
+        }
+        .btn-light-green {
+            background-color: #28a745; /* Bootstrap's success color */
+            color: white;
+        }
+        .btn-light-blue {
+            background-color: #17a2b8; /* Bootstrap's info color */
+            color: white;
+        }
+        h1, h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .concert-list, .booking-list {
+            list-style-type: none;
+            padding: 0;
+        }
+        .concert-card {
+            background-color: #ffffff; /* White background for concert cards */
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 10px 0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'home' %}">Concert Booking</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1>Welcome to the Dealer Page</h1>
+        <p>This page is only accessible to authorized dealers.</p>
+
+        <h2>Concert Management</h2>
+        <div class="text-center mb-4">
+            <a href="{% url 'add_concert' %}" class="btn btn-light-green">Add Concert</a>
+        </div>
+
+        <h2>Current Concerts</h2>
+        <ul class="concert-list">
+            {% for concert in concerts %}
+                <li class="concert-card">
+                    <strong>{{ concert.name }}</strong> - {{ concert.date_time }} - {{ concert.venue }} - ${{ concert.ticket_price }}
+                    <div class="text-right">
+                        <a href="{% url 'update_concert' concert.id %}" class="btn btn-light-green">Edit</a>
+                        <a href="{% url 'delete_concert' concert.id %}" class="btn btn-danger">Delete</a>
+                        <a href="{% url 'concert_details' concert.id %}" class="btn btn-light-blue">See Details</a>
+                    </div>
+                </li>
+            {% empty %}
+                <li>No concerts available.</li>
+            {% endfor %}
+        </ul>
+
+        <h2>User Bookings</h2>
+        <ul class="booking-list">
+            {% for booking in bookings %}
+                <li>
+                    User: {{ booking.user.username }} - Concert: {{ booking.concert.name }} - Status: {{ booking.status }}
+                </li>
+            {% empty %}
+                <li>No bookings found.</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

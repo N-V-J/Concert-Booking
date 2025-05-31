@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Results</title>
+    {% load static %}
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa; /* Light background color */
+        }
+        .navbar {
+            background-color: rgba(255, 255, 255, 0.9); /* Semi-transparent navbar */
+            padding: 10px 20px;
+        }
+        .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        .navbar-links {
+            display: flex;
+            align-items: center;
+        }
+        .navbar-links a {
+            margin-left: 20px;
+            text-decoration: none;
+            color: #333; /* Dark text for links */
+        }
+        .search-form {
+            display: flex;
+            margin-right: 20px;
+        }
+        .search-form input {
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .search-form button {
+            padding: 5px 10px;
+            border: none;
+            background-color: #007bff; /* Bootstrap primary color */
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .search-results-container {
+            margin: 20px auto;
+            max-width: 800px; /* Limit the width for better readability */
+            padding: 20px;
+            background-color: white; /* White background for results */
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .concerts {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+        .concert-card {
+            background-color: #ffffff; /* White background for concert cards */
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 10px;
+            width: calc(48% - 20px); /* Two cards per row */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .concert-image {
+            width: 100%; /* Responsive image */
+            border-radius: 10px;
+        }
+        h1 {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <a href="{% url 'home' %}" class="navbar-brand">Concert Booking</a>
+            <div class="navbar-links">
+                <form action="{% url 'search' %}" method="get" class="search-form">
+                    <input type="text" name="q" placeholder="Search concerts..." required>
+                    <button type="submit">Search</button>
+                </form>
+                <a href="{% url 'about' %}">About Us</a>
+                <a href="{% url 'logout' %}">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="search-results-container">
+        <h1>Search Results for "{{ query }}"</h1>
+        <div class="concerts">
+            {% for concert in concerts %}
+                <div class="concert-card">
+                    <img src="{{ concert.image.url }}" alt="{{ concert.name }}" class="concert-image">
+                    <h2>{{ concert.name }}</h2>
+                    <p>{{ concert.date_time|date:"F j, Y, g:i a" }}</p>
+                </div>
+            {% empty %}
+                <p>No concerts found matching your search.</p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

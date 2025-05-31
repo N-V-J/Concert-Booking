@@ -1,0 +1,117 @@
+{% load static %}
+{% load custom_filters %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payments</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa; /* Light background color */
+        }
+        .container {
+            margin-top: 20px;
+        }
+        .table {
+            background-color: white; /* White background for the table */
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            margin-bottom: 20px;
+        }
+        .btn {
+            margin-right: 10px; /* Space between buttons */
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'home' %}">Concert Booking</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'about' %}">About Us</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'orders' %}">Orders</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'logout' %}">Logout</a>  <!-- Logout link -->
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <h1>Your Booked Concerts</h1>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Concert</th>
+                    <th>Date & Time</th>
+                    <th>Venue</th>
+                    <th>Number of Tickets</th>
+                    <th>Price per Ticket</th>
+                    <th>Total Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for booking in bookings %}
+                <tr>
+                    <td>{{ booking.concert.name }}</td>
+                    <td>{{ booking.concert.date_time|date:"F j, Y g:i A" }}</td>
+                    <td>{{ booking.concert.venue }}</td>
+                    <td>{{ booking.tickets_booked }}</td>
+                    <td>₹{{ booking.concert.ticket_price }}</td>
+                    <td>₹{{ booking.tickets_booked|multiply:booking.concert.ticket_price }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6">No bookings found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        {% if bookings %}
+        <h3>Total Amount: ₹{{ total_price }}</h3>
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" name="payment_method" value="gpay" class="btn btn-success">Pay with GPay</button>
+            <button type="submit" name="payment_method" value="credit_card" class="btn btn-primary">Pay with Credit Card</button>
+        </form>
+        {% else %}
+        <p>Please book a concert to proceed with the payment.</p>
+        {% endif %}
+    </div>
+
+    <!-- Success Message Modal -->
+    <div class="modal fade" id="successModal" tabindex="-1" role="dialog" aria-labelledby="successModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="successModalLabel">Payment Successful</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal -body">
+                    Your payment was successful! Thank you for your purchase.
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="window.location.href='/'">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,115 @@
+{% load custom_filters %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Orders</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa; /* Light background color */
+        }
+        .container {
+            margin-top: 20px;
+        }
+        .table {
+            background-color: white; /* White background for the table */
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            margin-bottom: 20px;
+        }
+        .messages {
+            list-style-type: none;
+            padding: 0;
+        }
+        .messages li {
+            background-color: #f8d7da; /* Light red background for messages */
+            color: #721c24; /* Dark red text */
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'home' %}">Concert Booking</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'about' %}">About Us</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'orders' %}">Orders</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'logout' %}">Logout</a>  <!-- Logout link -->
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1>Your Booked Concerts</h1>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Concert</th>
+                    <th>Date & Time</th>
+                    <th>Venue</th>
+                    <th>Number of Tickets</th>
+                    <th>Price per Ticket</th>
+                    <th>Total Price</th>
+                    <th>QR Code</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for booking in bookings %}
+                <tr>
+                    <td>{{ booking.concert.name }}</td>
+                    <td>{{ booking.concert.date_time|date:"F j, Y g:i A" }}</td>
+                    <td>{{ booking.concert.venue }}</td>
+                    <td>{{ booking.tickets_booked }}</td>  <!-- Corrected to tickets_booked -->
+                    <td>₹{{ booking.concert.ticket_price }}</td>
+                    <td>₹{{ booking.tickets_booked|multiply:booking.concert.ticket_price }}</td>  <!-- Corrected to tickets_booked -->
+                    <td>
+                        {% if booking.qr_code %}
+                            <img src="{{ booking.qr_code.url }}" alt="QR Code" style="width: 100px; height: 100px;">
+                            <a href="{{ booking.qr_code.url }}" download class="btn btn-secondary">Download QR Code</a>
+                        {% else %}
+                            No QR Code available.
+                        {% endif %}
+                    </td>
+                    <td>
+                        <form action="{% url 'cancel_booking' booking.id %}" method="post">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger">Cancel</button>
+                        </form>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="8">No bookings found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <h3>Total Tickets Booked: {{ total_tickets }}</h3>
+        <h3>Total Price: ₹{{ total_price }}</h3>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
